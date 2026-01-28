@@ -67,3 +67,9 @@ jobs:
 
     - name: Wait for Rollout
       run: kubectl rollout status deployment/devsecops-app
+    
+
+    - name: Patch Deployment
+      run: |
+        kubectl rollout resatrt deployment/devsecops-app
+ 

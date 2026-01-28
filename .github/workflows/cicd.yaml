@@ -1,4 +1,3 @@
-
 name: DevSecOps CI/CD
 
 on:
@@ -28,14 +27,14 @@ jobs:
       run: |
         VERSION=${{ steps.version.outputs.version }}
         docker build --no-cache \
-          -t ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION \
-          -t ghcr.io/muhammadwaqasrazaq/devsecops-app:latest \
+          -t ghcr.io/muhammadwaqasrazaq/devscops:$VERSION \
+          -t ghcr.io/muhammadwaqasrazaq/devscops:latest \
           -f app/Dockerfile app/
 
     - name: Scan Image with Trivy
       uses: aquasecurity/trivy-action@0.20.0
       with:
-        image-ref: ghcr.io/muhammadwaqasrazaq/devsecops-app:latest
+        image-ref: ghcr.io/muhammadwaqasrazaq/devscops:latest
         severity: CRITICAL,HIGH
         ignore-unfixed: true
         exit-code: "0"
@@ -46,8 +45,8 @@ jobs:
     - name: Push Images
       run: |
         VERSION=${{ steps.version.outputs.version }}
-        docker push ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION
-        docker push ghcr.io/muhammadwaqasrazaq/devsecops-app:latest
+        docker push ghcr.io/muhammadwaqasrazaq/devscops:$VERSION
+        docker push ghcr.io/muhammadwaqasrazaq/devscops:latest
 
     - name: Create GHCR Secret
       run: |
@@ -64,7 +63,7 @@ jobs:
     - name: Patch Deployment With Version
       run: |
         VERSION=${{ steps.version.outputs.version }}
-        kubectl set image deployment/devsecops-app web=ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION
+        kubectl set image deployment/devsecops-app web=ghcr.io/muhammadwaqasrazaq/devscops:$VERSION
 
     - name: Wait for Rollout
       run: kubectl rollout status deployment/devsecops-app

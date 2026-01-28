@@ -14,10 +14,8 @@ spec:
     spec:
       containers:
       - name: web
-        image: ghcr.io/muhammadwaqasrazaq/devscops:latest
-        imagePullPolicy: Always
+        image: ghcr.io/muhammadwaqasrazaq/devscops:1.0.0
         ports:
         - containerPort: 3000
       imagePullSecrets:
       - name: ghcr-secret
-

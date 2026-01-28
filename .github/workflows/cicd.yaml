@@ -1,3 +1,4 @@
+
 name: DevSecOps CI/CD
 
 on:
@@ -27,33 +28,33 @@ jobs:
       run: |
         VERSION=${{ steps.version.outputs.version }}
         docker build --no-cache \
-          -t ghcr.io/${{ github.repository_owner }}/devsecops-app:$VERSION \
-          -t ghcr.io/${{ github.repository_owner }}/devsecops-app:latest \
+          -t ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION \
+          -t ghcr.io/muhammadwaqasrazaq/devsecops-app:latest \
           -f app/Dockerfile app/
 
     - name: Scan Image with Trivy
       uses: aquasecurity/trivy-action@0.20.0
       with:
-        image-ref: ghcr.io/${{ github.repository_owner }}/devsecops-app:latest
+        image-ref: ghcr.io/muhammadwaqasrazaq/devsecops-app:latest
         severity: CRITICAL,HIGH
         ignore-unfixed: true
         exit-code: "0"
 
     - name: Login to GHCR
-      run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u muhammadwaqasrazaq --password-stdin
 
     - name: Push Images
       run: |
         VERSION=${{ steps.version.outputs.version }}
-        docker push ghcr.io/${{ github.repository_owner }}/devsecops-app:$VERSION
-        docker push ghcr.io/${{ github.repository_owner }}/devsecops-app:latest
+        docker push ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION
+        docker push ghcr.io/muhammadwaqasrazaq/devsecops-app:latest
 
     - name: Create GHCR Secret
       run: |
         kubectl delete secret ghcr-secret --ignore-not-found=true
         kubectl create secret docker-registry ghcr-secret \
           --docker-server=ghcr.io \
-          --docker-username=${{ github.actor }} \
+          --docker-username=muhammadwaqasrazaq \
           --docker-password=${{ secrets.GHCR_PAT }} \
           --docker-email=dummy@example.com
 
@@ -63,7 +64,7 @@ jobs:
     - name: Patch Deployment With Version
       run: |
         VERSION=${{ steps.version.outputs.version }}
-        kubectl set image deployment/devsecops-app web=ghcr.io/${{ github.repository_owner }}/devsecops-app:$VERSION
+        kubectl set image deployment/devsecops-app web=ghcr.io/muhammadwaqasrazaq/devsecops-app:$VERSION
 
     - name: Wait for Rollout
       run: kubectl rollout status deployment/devsecops-app

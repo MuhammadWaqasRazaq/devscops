@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
         </head>
         <body>
             <div class="text">
-                <h1>HELLO</h1>
+                <h1>Assalam o alaikum</h1>
 		<h2>F2022266099</h2>
                 <p>from Muhammad Waqas</p>
                 <p>Cloud Computing Section : v1</p>

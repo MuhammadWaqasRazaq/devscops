@@ -9,30 +9,27 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Necessary for versioning to see previous tags
 
     - name: Generate Semantic Version
       id: version
       uses: paulhatch/semantic-version@v5.4.0
       with:
         tag_prefix: "v"
-        format: "${major}.${minor}.${patch}"
+        version_format: "${major}.${minor}.${patch}"
         major_pattern: "BREAKING CHANGE"
         minor_pattern: "feat"
+        bump_each_commit: true
 
     - name: Print version
       run: echo "VERSION=${{ steps.version.outputs.version }}"
 
     - name: Build Docker Image
       run: |
-    - name: Scan Image with Trivy
-      uses: aquasecurity/trivy-action@0.20.0
-      with:
-        image-ref: ghcr.io/muhammadwaqasrazaq/devscops:latest
-        severity: CRITICAL,HIGH
-        ignore-unfixed: true
-        exit-code: "0"
-        timeout: '15m0s'  # <--- Add this line to give it 15 minutes        VERSION=${{ steps.version.outputs.version }}
+        VERSION=${{ steps.version.outputs.version }}
         docker build --no-cache \
           -t ghcr.io/muhammadwaqasrazaq/devscops:$VERSION \
           -t ghcr.io/muhammadwaqasrazaq/devscops:latest \
@@ -46,6 +43,7 @@ jobs:
         ignore-unfixed: true
         exit-code: "0"
         timeout: '15m0s'
+
     - name: Login to GHCR
       run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u muhammadwaqasrazaq --password-stdin
 

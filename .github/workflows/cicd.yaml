@@ -38,7 +38,7 @@ jobs:
         severity: CRITICAL,HIGH
         ignore-unfixed: true
         exit-code: "0"
-
+        timeout: '15m0s'
     - name: Login to GHCR
       run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u muhammadwaqasrazaq --password-stdin
 
